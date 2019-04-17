@@ -1,0 +1,11 @@
+^{:repl-eval-timeout 60000}
+{:main           slimslender.main
+ :target         :nodejs
+ :output-to      "output/main.js"
+ :output-dir     "out"
+ :externs        ["externs.js"]
+ :npm-deps       {:semver "5.5.0"}
+ :install-deps   true
+ :optimizations  :none
+ :pretty-print   true
+ :parallel-build true}

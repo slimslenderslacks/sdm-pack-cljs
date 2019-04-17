@@ -1,0 +1,98 @@
+{
+  "name": "@slimslender/sdm-pack-cljs",
+  "version": "0.0.1",
+  "description": "show sexpr editors",
+  "author": {
+    "name": "Jim Clark",
+    "email": "jim@atomist.com",
+    "url": "https://atomist.com/"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slimslenderslacks/sdm-pack-cljs.git"
+  },
+  "keywords": [
+    "atomist",
+    "automation",
+    "sdm",
+    "clojure",
+    "cljs",
+    "fingerprints"
+  ],
+  "homepage": "https://github.com/slimslenderslacks/sdm-pack-cljs",
+  "bugs": {
+    "url": "https://github.com/slimslenderslacks/sdm-pack-cljs/issues"
+  },
+  "dependencies": {
+    "@atomist/slack-messages": "^1.1.0",
+    "@cljs-oss/module-deps": "^1.1.1",
+    "dockerfile-ast": "0.0.12",
+    "lodash": "^4.17.10",
+    "semver": "^5.5.0",
+    "xml-js": "^1.6.7"
+  },
+  "peerDependencies": {
+    "@atomist/automation-client": ">=1.3.0",
+    "@atomist/sdm": ">=1.3.0",
+    "@atomist/sdm-core": ">=1.3.0",
+    "@atomist/sdm-pack-docker": ">=1.1.0"
+  },
+  "devDependencies": {
+    "@atomist/automation-client": "^1.3.0",
+    "@atomist/sdm": "^1.3.0",
+    "@atomist/sdm-core": "^1.3.0",
+    "@atomist/sdm-pack-docker": "^1.1.0",
+    "@types/lodash": "^4.14.116",
+    "@types/mocha": "^2.2.48",
+    "@types/node": "^9.6.25",
+    "@types/power-assert": "^1.4.29",
+    "apollo-codegen": "^0.19.1",
+    "espower-typescript": "^8.1.3",
+    "mocha": "^4.1.0",
+    "npm-run-all": "^4.1.5",
+    "power-assert": "^1.4.4",
+    "prettier": "^1.14.0",
+    "rimraf": "^2.6.2",
+    "supervisor": "^0.12.0",
+    "ts-node": "7.0.0",
+    "tslint": "5.11.0",
+    "typedoc": "^0.11.1",
+    "typescript": "3.1.6"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
+    "build": "npm-run-all gql:gen compile:cljs compile:ts test lint doc",
+    "clean": "npm-run-all clean:compile clean:cljs clean:doc clean:run",
+    "compile": "npm-run-all gql:gen compile:cljs compile:ts",
+    "compile:cljs": "lein cljsbuild once prod",
+    "test:cljs": "lein doo node unit-tests once",
+    "clean:compile": "rimraf build dist git-info.json \"index.{d.ts,js*}\" \"{lib,test}/**/*.{d.ts,js*}\" lib/typings/types.ts",
+    "clean:dist": "npm-run-all clean clean:npm",
+    "clean:doc": "rimraf doc",
+    "clean:npm": "rimraf node_modules",
+    "clean:run": "rimraf *-v8.log profile.txt log",
+    "clean:cljs:build.js": "rimraf fingerprints/main.js",
+    "clean:cljs:lein": "lein clean",
+    "clean:cljs": "npm-run-all clean:cljs:lein clean:cljs:build.js",
+    "compile:ts": "tsc --project .",
+    "fmt": "tsfmt --replace",
+    "fmt:gql": "prettier --write \"**/*.graphql\"",
+    "git:info": "atm-git-info",
+    "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
+    "gql:gen": "atm-gql-gen",
+    "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "lint": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
+    "typedoc": "npm run doc"
+  },
+  "engines": {
+    "node": "9.x.x",
+    "npm": "5.x.x"
+  }
+}
