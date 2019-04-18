@@ -5,14 +5,25 @@ import {
     CodeTransformRegistration,
 } from "@atomist/sdm";
 import * as cljs from "../../output";
+import { ParameterType } from "@atomist/automation-client";
 
-const AddPlugin: CodeTransformRegistration = {
+interface LeinDepVersionParameters extends ParameterType {
+    name: string,
+    version: string,
+}
+
+const AddPlugin: CodeTransformRegistration<LeinDepVersionParameters> = {
     name: "AddLeiningenPlugin",
     intent: "cljs",
-    transform: async (p) => {
-        await cljs.addPlugin(p);
+    parameters: {
+        name: { required: true },
+        version: { required: true }
+    },
+    autoSubmit: true,
+    transform: async (p, inv) => {
+        await cljs.editLibraryVersion(p, inv.parameters.name, inv.parameters.version);
         return p;
-    }
+    },
 }
 
 export function cljsSupport(): ExtensionPack {

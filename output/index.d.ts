@@ -1,1 +1,1 @@
-export declare function addPlugin(p: any): Promise<any>;
+export declare function editLibraryVersion(p: any, libname: string, version: string): Promise<any>;

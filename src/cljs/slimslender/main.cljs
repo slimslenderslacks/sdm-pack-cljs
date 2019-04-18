@@ -11,12 +11,34 @@
             [atomist.promise :as promise]
             [hasch.core :as hasch]
             [atomist.cljs-log :as log]
-            [atomist.json :as json]))
+            [atomist.json :as json]
+            [cljs.reader :refer [read-string]]
+            [rewrite-clj.parser :as p]
+            [rewrite-clj.node :as n]
+            [rewrite-clj.zip :as z]
+            [cljs.nodejs :as nodejs]))
 
-(defn ^:export addPlugin
+(defn edit-file [f editor & args]
+  (spit f (apply editor (slurp f) args)))
+
+(defn edit-library [library-name library-version s]
+  (-> s
+      (z/of-string)
+      z/down
+      (z/find-next-value :dependencies)
+      (z/find z/next #(if-let [s (z/sexpr %)]
+                        (and (symbol? s)
+                             (= library-name (str s)))))
+      (z/right)
+      (z/edit (constantly library-version))
+      (z/root-string)))
+
+(defn ^:export editLibraryVersion
   ""
-  [p]
-  (log/info "addPlugin to " p)
+  [project libname version]
+  ;; project is a js/Object!
+  (log/info (gstring/format "Update library version %s/%s in %s" libname version (.-baseDir project)))
   (promise/chan->promise
    (go
-     true)))
+     (when (<! (promise/from-promise (.hasFile project "project.clj")))
+       (edit-file (str (.-baseDir project) "/project.clj") edit-library libname libversion)))))
