@@ -19,9 +19,14 @@
             [cljs.nodejs :as nodejs]))
 
 (defn edit-file [f editor & args]
-  (spit f (apply editor (slurp f) args)))
+  (try
+    (spit f (apply editor (slurp f) args))
+    true
+    (catch :default ex
+      (log/error "failed to apply editor " ex)
+      false)))
 
-(defn edit-library [library-name library-version s]
+(defn edit-library [s library-name library-version]
   (-> s
       (z/of-string)
       z/down
@@ -40,5 +45,6 @@
   (log/info (gstring/format "Update library version %s/%s in %s" libname version (.-baseDir project)))
   (promise/chan->promise
    (go
-     (when (<! (promise/from-promise (.hasFile project "project.clj")))
-       (edit-file (str (.-baseDir project) "/project.clj") edit-library libname libversion)))))
+     (if (<! (promise/from-promise (.hasFile project "project.clj")))
+       (edit-file (str (.-baseDir project) "/project.clj") edit-library libname version)
+       false))))
