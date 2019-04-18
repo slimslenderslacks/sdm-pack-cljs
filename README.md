@@ -37,4 +37,4 @@ This implies that you have already configured a workspace using [these instructi
 @atomist cljs name=org.clojure/clojure version=x.y.z
 ```
 
-This will generate a PullRequest updating a dependency in your project.clj file.  Leiningen already has a plugin to do this of course.  This just illustrates that you can build sexp transformation logic in clojurescript and easily embed that in an Atomist CodeTransform
+This will generate a PullRequest updating a dependency in your project.clj file.  The cljs code is [here](https://github.com/slimslenderslacks/sdm-pack-cljs/blob/master/src/cljs/slimslender/main.cljs).
