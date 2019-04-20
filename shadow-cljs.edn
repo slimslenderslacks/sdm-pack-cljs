@@ -1,0 +1,14 @@
+{:source-paths ["src/cljs"]
+ :dependencies [[cljfmt "0.5.7"]
+                [com.atomist/cljs-http "0.0.1"]
+                [com.rpl/specter "1.1.1"]
+                [io.replikativ/hasch "0.3.4"]
+                [rewrite-cljs "0.4.4"]
+                [cljs-node-io "0.5.0"]]
+ :dev-http {8080 "target/"}
+ :builds {:app {:output-to "output/main.js"
+                :target :node-script
+                :main slimslender.app/main!
+                :devtools {:after-load slimslender.app/reload!
+                           :http-root "target"
+                           :http-port 8080}}}}
